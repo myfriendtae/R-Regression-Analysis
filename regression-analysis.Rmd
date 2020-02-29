@@ -1,5 +1,13 @@
 ---
-output: rmarkdown::github_document
+title: "Regression Model Analysis: can transmission type predict fuel efficiency of a car?"
+knit: (function(input_file, encoding) {
+  out_dir <- './docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
+output:
+  html_document:
+    keep_md: TRUE
 ---
 
 ```{r, echo = FALSE}
@@ -8,9 +16,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Regression Model Analysis: can transmission type predict fuel efficiency of a car?
-
 ## Executive summary
+
 The report uses ```mtcars``` data set to answer the following questions:
 
 1. Is an automatic or manual transmission better for MPG?
@@ -23,17 +30,17 @@ Given all other variables held constant, I predict a manual car is likely to hav
 
 The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).
 
-* mpg	Miles/(US) gallon
-* cyl	Number of cylinders
-* disp	Displacement (cu.in.)
-* hp	Gross horsepower
-* drat	Rear axle ratio
-* wt	Weight (1000 lbs)
-* qsec	1/4 mile time
-* vs	Engine (0 = V-shaped, 1 = straight)
-* am	Transmission (0 = automatic, 1 = manual)
-* gear	Number of forward gears
-* carb	Number of carburetors
+ * mpg	Miles/(US) gallon
+ * cyl	Number of cylinders
+ * disp	Displacement (cu.in.)
+ * hp	Gross horsepower
+ * drat	Rear axle ratio
+ * wt	Weight (1000 lbs)
+ * qsec	1/4 mile time
+ * vs	Engine (0 = V-shaped, 1 = straight)
+ * am	Transmission (0 = automatic, 1 = manual)
+ * gear	Number of forward gears
+ * carb	Number of carburetors
 
 ## Data processing
 ```{r}
@@ -94,7 +101,6 @@ p.mat = cor.mtest(mtcars)
 corrplot(m, method='circle', order='hclust', p.mat=p.mat, sig.level='0.01')
 
 ```
-
 The correlation plot shows that mpg has correlation with am, gear and carb at significance level of 0.01.
 
 2. Hypothesis testing
@@ -102,10 +108,10 @@ The correlation plot shows that mpg has correlation with am, gear and carb at si
 ```{r echo=TRUE}
 t.test(mpg~am, data=mtcars2, var.equal=T)
 ```
-
 Havinga a null hypothesis of those two transmission types are equally efficient, the p-value, less than 0.05, implies the null hypothesis can be rejected. Therefore, there is difference in fuel efficiency, represented by mpg, between manual and automatic transmission.
 
 3. Information gain for variable selection
+
 ```{r}
 
 library(FSelector)
@@ -118,7 +124,7 @@ cutoff.biggest.diff(att_scores)
 
 FSelector package provides that wt, disp, hp and cyle are the best features to predict mpg.
 
-3. Feature selection using wrappper methods
+4. Feature selection using wrappper methods
 
 ```{r}
 #library(MASS) #this can be achieved by using selectFeatures() fuction from  mlr package.
