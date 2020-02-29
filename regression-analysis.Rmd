@@ -1,17 +1,11 @@
 ---
-title: "Regression Analysis"
-knit: (function(input_file, encoding) {
-  out_dir <- '/';
-  rmarkdown::render(input_file,
- encoding=encoding,
- output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
-author: "Tae Park"
-date: "29/02/2020"
-output: html_document
+output: rmarkdown::github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  fig.path = "README_figs/README-"
+)
 ```
 
 # Regression Model Analysis: can transmission type predict fuel efficiency of a car?
@@ -19,8 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Executive summary
 The report uses ```mtcars``` data set to answer the following questions:
 
->  1. Is an automatic or manual transmission better for MPG?
->  2. How to quantify the MPG difference between automatic and manual transmissions?
+1. Is an automatic or manual transmission better for MPG?
+2. How to quantify the MPG difference between automatic and manual transmissions?
 
 After the analysis, I conclude that there is difference on miles per gallon(mpg) between manual and automatic cars, but the difference can be more affected by the weight, gross horspower and number of cylinders of the car. 
 Given all other variables held constant, I predict a manual car is likely to have a better mpg, between 0.4 and 3.2 miles per gallon, than a automatic car, at a confidence level of 80%.
@@ -29,17 +23,17 @@ Given all other variables held constant, I predict a manual car is likely to hav
 
 The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).
 
-> * mpg	Miles/(US) gallon
-> * cyl	Number of cylinders
-> * disp	Displacement (cu.in.)
-> * hp	Gross horsepower
-> * drat	Rear axle ratio
-> * wt	Weight (1000 lbs)
-> * qsec	1/4 mile time
-> * vs	Engine (0 = V-shaped, 1 = straight)
-> * am	Transmission (0 = automatic, 1 = manual)
-> * gear	Number of forward gears
-> * carb	Number of carburetors
+* mpg	Miles/(US) gallon
+* cyl	Number of cylinders
+* disp	Displacement (cu.in.)
+* hp	Gross horsepower
+* drat	Rear axle ratio
+* wt	Weight (1000 lbs)
+* qsec	1/4 mile time
+* vs	Engine (0 = V-shaped, 1 = straight)
+* am	Transmission (0 = automatic, 1 = manual)
+* gear	Number of forward gears
+* carb	Number of carburetors
 
 ## Data processing
 ```{r}
@@ -67,6 +61,7 @@ ggplot(mtcars2, aes(x=am, y=mpg)) +
 ```
 
 As shown boxplot, manual cars have a higher mpg in average than automatic cars.
+
 ### Model Selection
 
 1. Using correlation
@@ -99,6 +94,7 @@ p.mat = cor.mtest(mtcars)
 corrplot(m, method='circle', order='hclust', p.mat=p.mat, sig.level='0.01')
 
 ```
+
 The correlation plot shows that mpg has correlation with am, gear and carb at significance level of 0.01.
 
 2. Hypothesis testing
@@ -106,6 +102,7 @@ The correlation plot shows that mpg has correlation with am, gear and carb at si
 ```{r echo=TRUE}
 t.test(mpg~am, data=mtcars2, var.equal=T)
 ```
+
 Havinga a null hypothesis of those two transmission types are equally efficient, the p-value, less than 0.05, implies the null hypothesis can be rejected. Therefore, there is difference in fuel efficiency, represented by mpg, between manual and automatic transmission.
 
 3. Information gain for variable selection
@@ -118,6 +115,7 @@ cutoff.biggest.diff(att_scores)
 #cutoff.k.percent(att_scores, 0.4)
 
 ```
+
 FSelector package provides that wt, disp, hp and cyle are the best features to predict mpg.
 
 3. Feature selection using wrappper methods
@@ -127,6 +125,7 @@ FSelector package provides that wt, disp, hp and cyle are the best features to p
 #stepAIC(lm(mpg ~., data=mtcars2), direction='backward', trace=FALSE)
 step(lm(mpg ~ ., data = mtcars2), direction = 'backward', trace = 0) # stepwise backward elimination
 ```
+
 Using traditional methods, backward selection, the features that relate to mpg are cyl, hp and wt
 
 ```{r}
@@ -160,12 +159,14 @@ The first model only considers wt, hp and disp whereas the second model consider
 par(mfrow=c(2,2))
 plot(model2)
 ```
+
 Residuals are between -2 and 4 mpg, but appear random and normally distributed.
 
-## MPG difference between automatic and manual transmissions
+## Question2: MPG difference between automatic and manual transmissions
 
 ```{r}
 summary(model2)
 ```
+
 After the model selection process, the features of wt, hp and cyl, especially between 4 and 6 cylinders, should be considered to prediect the value of mpg as to the transmission type. Given the sample size is small, it's common to have only few significant predictors of mpg. 
 However, I would conculde that considering the transmission type alone cannot make a decision whethet having a better mpg. Having 1.80921 mpg of cofficient at Pr(>|t|) of 0.20646, I estimate given the other variables are constant, a manual car can have a better average mpg of 1.8092 than a automatic car with a confidence level of 0.7935.
