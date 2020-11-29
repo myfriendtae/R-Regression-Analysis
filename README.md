@@ -5,3 +5,5 @@ Regression analysis for Motor Trend, a magazine about the automobile industry. L
 * Is an automatic or manual transmission better for MPG 
 * Quantify the MPG difference between automatic and manual transmissions 
 
+
+[link to the full report](http://rpubs.com/TaePark/697216)
